@@ -1,0 +1,24 @@
+baseurl = "http://otm.github.io"
+languageCode = "en-us"
+title = "otm.io"
+theme = "hyde"
+copyright = "Nils Lagerkvist"
+
+[Author]
+	name = "Nils Lagerkvist"
+
+[Permalinks]
+	blog = "/:year/:month/:filename/"
+	code = "/:filename/"
+
+[Taxonomies]
+	tag = "tags"
+	series = "series"
+	series-desc = "series-desc"
+
+[params]
+	description = "heeding the code"
+	# twitter = "https://twitter.com/otm"
+	github = "https://github.com/otm"
+	gplus = "https://plus.google.com/+NilsLagerkvist"
+	disqus = "otm.io"
