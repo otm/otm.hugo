@@ -1,0 +1,26 @@
+function target.generate()
+  blade.sh("hugo --destination=./production")
+end
+
+function target.preview()
+  blade.sh("hugo server  --buildDrafts --watch")
+end
+
+function target.publish(article)
+  blade.sh(string.format("hugo undraft %s", article))
+end
+
+function target.new(article)
+  blade.sh(sring.format("hugo new %s", article))
+end
+
+function target.list(type)
+  blade.sh(string.format("hugo list %s", type))
+end
+
+blade.compgen(target.list, function(compWords, compCWord)
+  if compCWord == 1 then
+    return "drafts"
+  end
+  return ""
+end)
