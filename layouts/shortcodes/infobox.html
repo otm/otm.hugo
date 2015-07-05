@@ -1,0 +1,19 @@
+<div style="position:relative">
+<pre>
+{{ if (.Get "text") }}{{ .Get "text" }}{{else}}{{ .Inner }}{{end}}
+</pre>
+  <div style="position: absolute; right: 0; top: 0; background-color: lightgray; padding: 0 5px 0 5px; border-bottom-left-radius: 5px">
+    {{ .Get "label" }}
+  </div>
+</div>
+<!--
+{{% graybox label="Draft Information" %}}
+* This is some text
+* More text
+{{% /graybox %}}
+
+{{% infobox label="test" %}}TEST TEST{{% /infobox %}}
+
+
+{{% infobox text="hej" label="test" %}}
+-->

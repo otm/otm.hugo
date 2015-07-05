@@ -11,8 +11,8 @@ norss = true
 
 [[badges]]
 	alt = "godoc"
-	img = "https://godoc.org/otm/sshauth?status.png"
-	url = "https://godoc.org/otm/sshauth"
+	img = "https://godoc.org/github.com/otm/sshauth?status.png"
+	url = "https://godoc.org/github.com/otm/sshauth"
 
 [[badges]]
   alt = "fork me"
@@ -21,7 +21,7 @@ norss = true
 
 [[badges]]
   alt = "download"
-  img = "https://img.shields.io/github/release/qubyte/rubidium.svg"
+  img = "https://img.shields.io/github/release/otm/sshauth.svg"
   url = "https://github.com/otm/sshauth/releases/latest"
 
 +++

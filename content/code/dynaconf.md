@@ -10,8 +10,8 @@ norss = true
 
 [[badges]]
 	alt = "godoc"
-	img = "https://godoc.org/otm/dynaconf?status.png"
-	url = "https://godoc.org/otm/dynaconf"
+	img = "https://godoc.org/github.com/otm/dynaconf?status.png"
+	url = "https://godoc.org/github.com/otm/dynaconf"
 
 [[badges]]
   alt = "fork me"
@@ -20,7 +20,7 @@ norss = true
 
 [[badges]]
   alt = "download"
-  img = "https://img.shields.io/github/release/qubyte/rubidium.svg"
+  img = "https://img.shields.io/github/release/otm/dynaconf.svg"
   url = "https://github.com/otm/dynaconf/releases/latest"
 
 +++
