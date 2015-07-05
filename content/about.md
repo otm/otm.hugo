@@ -7,6 +7,6 @@ title = "About"
 +++
 
 
-I'm a full stack developer who also enyoys coding devop tools.
+I'm a full stack developer who also enjoys coding devop tools.
 
 {{< figure src="/images/Morzine-10.jpg" title="Biking in Morzine" >}}
