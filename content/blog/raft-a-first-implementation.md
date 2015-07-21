@@ -9,18 +9,30 @@ series = ["Raft 101"]
 
 ***tl;dr In this part we will implement a very simplistic cluster node using the etcd raft implementation. And with the node implementation we will start up a small cluster.***
 
-The complete source to this post can be found at http://github.com/otm/raft-part-1
+The complete source to this post can be found at http://github.com/otm/raft-part-1, and documentation for the etcd raft at https://godoc.org/github.com/coreos/etcd/raft
 
 ### Creating a Basic Node
 Clusters are built by nodes, so lets start of by defining a node. Initially the node only needs to keep track of the raft and the persistent storage. Below is a minimal implementation of the node type and its constructor function.
 
 ~~~ go
+import (
+  "github.com/coreos/etcd/raft"
+  "github.com/coreos/etcd/raft/raftpb"
+  "golang.org/x/net/context"
+)
+
   const hb = 1
 
   type node struct {
+    // id is the node id in the cluster
+    id        unint64
+
     // the raft that the cluster node will use
     // this includes the WAL
-  	raft      raft.Node
+    raft      raft.Node
+
+    // the raft configuration
+    cfg      *raft.Config
 
     // pstore is a fake implementation of a persistent storage
     // that will be used side-by-side with the WAL in the raft
@@ -31,19 +43,27 @@ Clusters are built by nodes, so lets start of by defining a node. Initially the 
     n := &node{
       id: id,
       cfg: &raft.Config{
-    		ID:              uint64(id),
-    		ElectionTick:    10 * hb,
+        // ID in the etcd raft
+        ID:              uint64(id),
+
+        // ElectionTick controls the time before a new election starts
+        ElectionTick:    10 * hb,
+
+        // HeartbeatTick controls the time between heartbeats
         HeartbeatTick:   hb,
-    		Storage:         raft.NewMemoryStorage(),
-    		MaxSizePerMsg:   math.MaxUint16,
-    		MaxInflightMsgs: 256,
-    	},
+
+        // Storage contains the log
+        Storage:         raft.NewMemoryStorage(),
+
+        MaxSizePerMsg:   math.MaxUint16,
+        MaxInflightMsgs: 256,
+      },
       pstore: make(map[string]string),
     }
 
     n.raft = raft.StartNode(n.cfg, peers)
 
-  	return n
+    return n
   }
 
 ~~~
@@ -59,18 +79,18 @@ So the state machine main loop will look like this:
 
 ~~~ go
 func (n *node) run() {
-	n.ticker = time.Tick(time.Second)
-	for {
-		select {
-		case <-n.ticker:
+  n.ticker = time.Tick(time.Second)
+  for {
+    select {
+    case <-n.ticker:
       // Point (4) above
-			n.raft.Tick()
-		case rd := <-n.raft.Ready():
-			// Point (2) above
-		case <-n.done:
-			return
-		}
-	}
+      n.raft.Tick()
+    case rd := <-n.raft.Ready():
+      // Point (2) above
+    case <-n.done:
+      return
+    }
+  }
 }
 ~~~
 
@@ -151,15 +171,15 @@ Saving to storage is not so advanced in a simplistic example like this:
 
 ~~~ go
 func (n *node) saveToStorage(hardState raftpb.HardState, entries []raftpb.Entry, snapshot raftpb.Snapshot) {
-	n.store.Append(entries)
+  n.store.Append(entries)
 
-	if !raft.IsEmptyHardState(hardState) {
-		n.store.SetHardState(hardState)
-	}
+  if !raft.IsEmptyHardState(hardState) {
+    n.store.SetHardState(hardState)
+  }
 
-	if !raft.IsEmptySnap(snapshot) {
-		n.store.ApplySnapshot(snapshot)
-	}
+  if !raft.IsEmptySnap(snapshot) {
+    n.store.ApplySnapshot(snapshot)
+  }
 }
 ~~~
 
@@ -168,17 +188,17 @@ For now the RPC will be simulated with a global map which holds the nodes. With 
 
 ~~~ go
 func (n *node) send(messages []raftpb.Message) {
-	for _, m := range messages {
+  for _, m := range messages {
     // Inspect the message (just for fun)
-		log.Println(raft.DescribeMessage(m, nil))
+    log.Println(raft.DescribeMessage(m, nil))
 
-		// send message to other node
-		nodes[m.To].receive(n.ctx, m)
-	}
+    // send message to other node
+    nodes[m.To].receive(n.ctx, m)
+  }
 }
 
 func (n *node) receive(ctx context.Context, message raftpb.Message) {
-	n.raft.Step(ctx, message)
+  n.raft.Step(ctx, message)
 }
 ~~~
 
@@ -188,12 +208,12 @@ If `entry.Type` of the `raftpb.Entry` is `raftpb.EntryNormal` the message should
 ~~~ go
 func (n *node) process(entry raftpb.Entry) {
 
-	if entry.Type == raftpb.EntryNormal && entry.Data != nil {
-		log.Println("normal message:", string(entry.Data))
+  if entry.Type == raftpb.EntryNormal && entry.Data != nil {
+    log.Println("normal message:", string(entry.Data))
 
     parts := bytes.SplitN(entry.Data, []byte(":"), 2)
-		n.pstore[string(parts[0])] = string(parts[1])
-	}
+    n.pstore[string(parts[0])] = string(parts[1])
+  }
 }
 ~~~
 
@@ -202,7 +222,7 @@ For now `processSnapshot` will only be a dummy implementation. But basically it 
 
 ~~~ go
 func (n *node) processSnapshot(snapshot raftpb.Snapshot) {
-	log.Printf("Applying snapshot on %v is not implemenetd yet")
+  log.Printf("Applying snapshot on %v is not implemenetd yet")
 }
 ~~~
 
