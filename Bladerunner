@@ -11,7 +11,8 @@ function target.publish(article)
 end
 
 function target.new(article)
-  blade.sh(sring.format("hugo new %s", article))
+  print("article = ", article)
+  blade.sh(string.format("hugo new %s", article))
 end
 
 function target.list(type)
