@@ -1,6 +1,6 @@
 baseurl = "https://otm.github.io"
 languageCode = "en-us"
-title = "otm.io"
+title = "otm"
 theme = "hyde"
 copyright = "Nils Lagerkvist"
 
