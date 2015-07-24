@@ -96,7 +96,7 @@ func main() {
 
 The LState defines some convenience functions, in the example above we are using `L.ToInt(1)` to fetch the first function argument.
 
-***Note:*** *Lua is zero-indexed, so the first function argument is fetched with `L.ToInt(1)`, second argument with `L.ToInt(2)`. In Lua, all arrays are 1-indexed, however t[0] is still valid but that would result in the lenght of the array to be off-by-one.*
+***Note:*** *Lua isn't zero-indexed, so the first function argument is fetched with `L.ToInt(1)`, second argument with `L.ToInt(2)`. In Lua, all arrays are 1-indexed, however t[0] is still valid but that would result in the lenght of the array to be off-by-one.*
 
 There are a number of `To...(n int)` functions available. These functions does not throw errors, but will return Go default values if conversion is not possible. To get automatic errors the `L.Check...(n int)` family of functions can be used; They throw a Lua error if the type check fails. For optional arguments the `L.Opt...(n int, default T)` functions can be used. Example:
 
